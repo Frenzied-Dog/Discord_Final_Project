@@ -1,4 +1,4 @@
 *.disabled
-test/*
-cogs/__pycache__/*
+test
+cogs/__pycache__
 .env

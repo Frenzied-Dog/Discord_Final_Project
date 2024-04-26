@@ -10,11 +10,7 @@ import sqlite3
 load_dotenv()
 intents = discord.Intents.all()
 bot = commands.Bot(command_prefix = "%", intents = intents, application_id=os.getenv("APP_ID"), activity = discord.Game(name="硬課一堆..."))
-# bot.fileData = {}
-# bot.sortedData = {}
-# bot.courses = {}
-# bot.keyWords = ["桌球","籃球","羽球","排球","微積分","工程數學","電子學","電路學","電磁學","日文","德文","法文","西班牙文"]
-# bot.exceptions = ["ＶＬＳＩ","Linux"]
+
 
 # 當機器人完成啟動時
 @bot.event
