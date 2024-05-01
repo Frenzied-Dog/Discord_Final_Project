@@ -15,11 +15,12 @@ class Courses(commands.Cog):
   
   
 	@commands.hybrid_command(name="search", description="查詢")
+	@commands.guild_only()
 	@app_commands.guilds(discord.Object(id=539951635288293397))
 	async def daily(self, ctx: commands.Context) -> None:
 		"""查詢課程"""
 		await ctx.reply("敬請期待")
-  
-  
+
+
 async def setup(bot: commands.Bot):
 	await bot.add_cog(Courses(bot), guilds=[discord.Object(id=539951635288293397)])

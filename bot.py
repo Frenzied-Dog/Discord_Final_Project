@@ -9,7 +9,8 @@ import sqlite3
 
 load_dotenv()
 intents = discord.Intents.all()
-bot = commands.Bot(command_prefix = "%", intents = intents, application_id=os.getenv("APP_ID"), activity = discord.Game(name="硬課一堆..."))
+bot = commands.Bot(command_prefix = "%", intents = intents, application_id=os.getenv("APP_ID"), \
+				   activity = discord.Activity(name="森森鈴蘭", type=discord.ActivityType.watching), state="https://www.youtube.com/@lilylinglan")
 
 
 # 當機器人完成啟動時
