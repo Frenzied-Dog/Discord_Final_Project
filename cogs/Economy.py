@@ -42,13 +42,15 @@ class Economy(commands.Cog):
 	@commands.hybrid_command(name="bet", description="賭博")
 	@commands.guild_only()
 	@app_commands.guilds(discord.Object(id=539951635288293397))
-	async def bet(self, ctx: commands.Context, amount: int) -> None:
+	async def bet(self, ctx: commands.Context, amount: int, big : bool = True) -> None:
 		"""小遊戲~
 
 		Parameters
 		-----------
 		amount: int
 			要下注的金額
+		big: bool
+			猜大小(預設猜大)
 		"""
 
 		if amount < 1:
@@ -57,17 +59,18 @@ class Economy(commands.Cog):
 
 		con = sqlite3.connect('cogs/data.db')
 		user = con.execute("SELECT * FROM USERS WHERE ID = ?;", (ctx.author.id,)).fetchone()
+		rand = random()
   
 		if user == None or user[1] < amount:
 			await ctx.reply("你錢不夠QQ")
-		elif (random()) > 0.7:
+		elif (big and rand > 0.5) or (not big and rand <= 0.5):
 			con.execute("UPDATE USERS SET Coins = ? WHERE ID = ?;",(user[1]+amount, ctx.author.id))
 			con.commit()
-			await ctx.reply(f"贏得{amount}")
+			await ctx.reply(f"數字是%.2f 你贏得了{amount}元!" % rand)
 		else:
 			con.execute("UPDATE USERS SET Coins = ? WHERE ID = ?;",(user[1]-amount, ctx.author.id))
 			con.commit()		
-			await ctx.reply(f"輸掉{amount}")
+			await ctx.reply(f"數字是%.2f 你輸掉了{amount}元QQ" % rand)
 
 
 	@commands.hybrid_command(name="pay", description="支付金錢")
