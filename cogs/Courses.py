@@ -14,7 +14,7 @@ class Courses(commands.Cog):
 		print("Courses Cog loaded")
   
   
-	@commands.hybrid_command(name="search", description="查詢")
+	@commands.hybrid_command(name="search", description="課程查詢")
 	@commands.guild_only()
 	@app_commands.guilds(discord.Object(id=539951635288293397))
 	async def daily(self, ctx: commands.Context) -> None:

@@ -24,6 +24,7 @@ class Sync(commands.Cog):
 			await ctx.reply('此指令僅限機器人擁有者使用!')
 		else:
 			await ctx.reply(error)
+   
 
 async def setup(bot: commands.Bot):
 	await bot.add_cog(Sync(bot), guilds=[discord.Object(id=539951635288293397)])

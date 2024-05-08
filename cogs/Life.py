@@ -9,7 +9,7 @@ from random import randint
 top10_url = f"https://api.giphy.com/v1/gifs/trending?api_key={os.getenv('GIPHY_KEY')}&limit=10"
 random_url = f"https://api.giphy.com/v1/gifs/random?api_key={os.getenv('GIPHY_KEY')}"
 giphy_search_url = f"https://api.giphy.com/v1/gifs/search?api_key={os.getenv('GIPHY_KEY')}&q=%s&limit=25&offset=0&rating=g&lang=en&bundle=messaging_non_clips"
-tenor_search_url = f"https://tenor.googleapis.com/v2/search?q=%s&key={os.getenv('TENOR_KEY')}&client_key=fddcbot&limit=5&media_filter=gif&random=true"
+tenor_search_url = f"https://tenor.googleapis.com/v2/search?key={os.getenv('TENOR_KEY')}&q=%s&client_key=fddcbot&limit=5&media_filter=gif&random=true"
 
 class Life(commands.Cog):
 	def __init__(self, bot):
@@ -62,7 +62,7 @@ class Life(commands.Cog):
 		if user == None or user[1] < 10:
 			await ctx.reply("你錢不夠QQ")	
 		else:
-			con.execute("UPDATE USERS SET Coins = ? WHERE ID = ?;",(user[1]-0, ctx.author.id)) # for testing
+			con.execute("UPDATE USERS SET Coins = ? WHERE ID = ?;",(user[1]-10, ctx.author.id))
 			con.commit()
 			con.close()
 
