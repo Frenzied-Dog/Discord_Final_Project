@@ -27,12 +27,14 @@ class Life(commands.Cog):
 	async def random_gif(self, ctx: commands.Context) -> None:
 		"""隨機GIF (每次5積分)"""
 		con = sqlite3.connect('cogs/data.db')
+		con.row_factory = sqlite3.Row
+  
 		user = con.execute("SELECT * FROM USERS WHERE ID = ?;", (ctx.author.id,)).fetchone()
   
-		if user == None or user[1] < 5:
+		if user == None or user["Coins"] < 5:
 			await ctx.reply("你錢不夠QQ")	
 		else:
-			con.execute("UPDATE USERS SET Coins = ? WHERE ID = ?;",(user[1]-5, ctx.author.id))
+			con.execute("UPDATE USERS SET Coins = ? WHERE ID = ?;",(user["Coins"]-5, ctx.author.id))
 			con.commit()
    
 			response = requests.get(random_url)
@@ -57,12 +59,13 @@ class Life(commands.Cog):
 			關鍵字
 		"""
 		con = sqlite3.connect('cogs/data.db')
+		con.row_factory = sqlite3.Row
 		user = con.execute("SELECT * FROM USERS WHERE ID = ?;", (ctx.author.id,)).fetchone()
   
-		if user == None or user[1] < 10:
+		if user == None or user["Coins"] < 10:
 			await ctx.reply("你錢不夠QQ")	
 		else:
-			con.execute("UPDATE USERS SET Coins = ? WHERE ID = ?;",(user[1]-10, ctx.author.id))
+			con.execute("UPDATE USERS SET Coins = ? WHERE ID = ?;",(user["Coins"]-10, ctx.author.id))
 			con.commit()
 			con.close()
 

@@ -21,21 +21,24 @@ class Economy(commands.Cog):
 	async def daily(self, ctx: commands.Context) -> None:
 		"""每日簽到"""
   
-		# To do: check if user has already signed in today
-		# To do: sql database
+		await ctx.defer()
 		con = sqlite3.connect('cogs/data.db')
+		con.row_factory = sqlite3.Row
+  
 		user = con.execute("SELECT * FROM USERS WHERE ID = ?;", (ctx.author.id,)).fetchone()
+		# check if user exists
 		if user == None:
 			con.execute("INSERT INTO USERS Values (?, 10, ?);", (ctx.author.id, time.strftime("%Y-%m-%d")))
 			con.commit()
 			await ctx.reply("初次簽到成功! (+10)")
 		elif user[2] == time.strftime("%Y-%m-%d"):
+			# check if user has signed in today
 			await ctx.reply("今天已經簽到過了!")
 		else:
 			con.execute("UPDATE USERS SET Coins = ?, LastSigned = ? WHERE ID = ?;",
-               					(user[1]+10, time.strftime("%Y-%m-%d"), ctx.author.id))
+               					(user["Coins"]+10, time.strftime("%Y-%m-%d"), ctx.author.id))
 			con.commit()
-			await ctx.reply(f"簽到成功 (+10), 現在為 {user[1]+10}")
+			await ctx.reply(f"簽到成功 (+10), 現在為 {user['Coins']+10}")
 		con.close()
 
 
@@ -57,18 +60,20 @@ class Economy(commands.Cog):
 			await ctx.reply("請下注至少1元")
 			return
 
+		await ctx.defer()
 		con = sqlite3.connect('cogs/data.db')
+		con.row_factory = sqlite3.Row
 		user = con.execute("SELECT * FROM USERS WHERE ID = ?;", (ctx.author.id,)).fetchone()
 		rand = random()
   
-		if user == None or user[1] < amount:
+		if user == None or user["Coins"] < amount:
 			await ctx.reply("你錢不夠QQ")
 		elif (big and rand > 0.5) or (not big and rand <= 0.5):
-			con.execute("UPDATE USERS SET Coins = ? WHERE ID = ?;",(user[1]+amount, ctx.author.id))
+			con.execute("UPDATE USERS SET Coins = ? WHERE ID = ?;",(user["Coins"]+amount, ctx.author.id))
 			con.commit()
 			await ctx.reply(f"數字是%.2f 你贏得了{amount}元!" % rand)
 		else:
-			con.execute("UPDATE USERS SET Coins = ? WHERE ID = ?;",(user[1]-amount, ctx.author.id))
+			con.execute("UPDATE USERS SET Coins = ? WHERE ID = ?;",(user["Coins"]-amount, ctx.author.id))
 			con.commit()		
 			await ctx.reply(f"數字是%.2f 你輸掉了{amount}元QQ" % rand)
 
@@ -91,17 +96,21 @@ class Economy(commands.Cog):
 			await ctx.reply("數量必須大於0")
 			return
 
+		await ctx.defer()
 		con = sqlite3.connect('cogs/data.db')
+		con.row_factory = sqlite3.Row
+  
+		# check if sender/receiver exists in database
 		sender = con.execute("SELECT * FROM USERS WHERE ID = ?;", (ctx.author.id,)).fetchone()
 		receiver = con.execute("SELECT * FROM USERS WHERE ID = ?;", (user.id,)).fetchone()
-		if sender == None or sender[1] < amount:
+		if sender == None or sender["Coins"] < amount:
 			await ctx.reply("你錢不夠QQ")
 		else:
-			con.execute("UpDATE USERS SET Coins = ? WHERE ID = ?;",(sender[1]-amount, ctx.author.id))
+			con.execute("UpDATE USERS SET Coins = ? WHERE ID = ?;",(sender["Coins"]-amount, ctx.author.id))
 			if receiver == None:
 				con.execute("INSERT INTO USERS Values (?, ?, ?);", (user.id, amount, ""))
 			else:
-				con.execute("UpDATE USERS SET Coins = ? WHERE ID = ?;",(receiver[1]+amount, user.id))
+				con.execute("UPDATE USERS SET Coins = ? WHERE ID = ?;",(receiver["Coins"]+amount, user.id))
 			con.commit()
 
 		await ctx.reply(f"{ctx.author.mention} 支付了 {amount}元 給{user.mention}")
@@ -113,12 +122,16 @@ class Economy(commands.Cog):
 	async def list(self, ctx: commands.Context) -> None:
 		"""查詢自己的金錢"""
   
+		await ctx.defer()
 		con = sqlite3.connect('cogs/data.db')
+		con.row_factory = sqlite3.Row
+		
+		# check if user exists in database
 		user = con.execute("SELECT * FROM USERS WHERE ID = ?;", (ctx.author.id,)).fetchone()
 		if user == None:
 			await ctx.reply("目前還沒有你的資料喔")
 		else:
-			await ctx.reply(f"{ctx.author.mention} 目前有 {user[1]}元\n上次簽到時間: {user[2]}")
+			await ctx.reply(f"{ctx.author.mention} 目前有 {user['Coins']}元\n上次簽到時間: {user['LastSigned']}")
 
 
 	@commands.hybrid_command(name="rank", description="排行榜")
@@ -126,10 +139,11 @@ class Economy(commands.Cog):
 	@app_commands.guilds(discord.Object(id=539951635288293397))
 	async def rank(self, ctx: commands.Context) -> None:
 		"""金錢排行榜"""
-  
+
+		await ctx.defer()
 		con = sqlite3.connect('cogs/data.db')
 		ranks = con.execute("SELECT ID,Coins FROM USERS ORDER BY Coins DESC LIMIT 5;").fetchall()
-  
+
 		ret = "```\n排行榜:\n"
 		for i, (id, coins) in enumerate(ranks):
 			name = ctx.guild.get_member(int(id)).display_name
