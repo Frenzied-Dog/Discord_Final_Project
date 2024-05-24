@@ -1,17 +1,17 @@
+import sys; sys.path.append("..")
+from stonk_analyze import currency_choice
 import os
 import asyncio
 from dotenv import load_dotenv
-
 import discord
 from discord.ext import commands
-
-import sqlite3
 
 load_dotenv()
 intents = discord.Intents.all()
 bot = commands.Bot(command_prefix = "%", intents = intents, application_id=os.getenv("APP_ID"), \
 				   activity = discord.Activity(name="森森鈴蘭", type=discord.ActivityType.watching), state="https://www.youtube.com/@lilylinglan")
-
+bot.datas = {}
+for i in currency_choice: bot.datas[i] = {}
 
 # 當機器人完成啟動時
 @bot.event
