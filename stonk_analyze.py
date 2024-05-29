@@ -8,7 +8,7 @@ import matplotlib
 matplotlib.use('agg')
 
 rate_url = "https://rate.bot.com.tw/xrt/quote/l6m/%s"
-currency_choice = ["USD","EUR","CNY","JPY","HKD","GBP","AUD","CAD","SGD","CHF","ZAR","SEK","NZD","THB"]
+currency_choice = ["USD","EUR","CNY","JPY","HKD","GBP","AUD","SGD"]
 en2cn_dict = {"Cash_BID": "現金買入", "Cash_ASK": "現金賣出", "IMM_BID": "即期買入", "IMM_ASK": "即期賣出"}
 
 

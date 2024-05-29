@@ -1,6 +1,5 @@
 *.disabled
 test
-cogs/
 .env
 *.db-journal
 __pycache__

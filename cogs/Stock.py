@@ -12,9 +12,7 @@ from typing import Literal
 # import requests, bs4, time
 
 # rate_url = "https://rate.bot.com.tw/xrt/quote/l6m/%s"
-cur_options = Literal["USD","EUR","CNY","JPY","HKD","GBP","AUD","CAD","SGD","CHF","ZAR","SEK","NZD","THB"]
-# currency_choice = ["USD","EUR","CNY","JPY","HKD","GBP","AUD","CAD","SGD","CHF","ZAR","SEK","NZD","THB"]
-# en2cn_dict = {"Cash_BID": "現金買入", "Cash_ASK": "現金賣出", "IMM_BID": "即期買入", "IMM_ASK": "即期賣出"}
+CurrencyOptions = Literal["USD","EUR","CNY","JPY","HKD","GBP","AUD","SGD"]
 
 class Stock(commands.Cog):
 	def __init__(self, bot):
@@ -52,7 +50,7 @@ class Stock(commands.Cog):
 	@commands.hybrid_command(name="exchange_rate", description="查詢半年內匯率")
 	@commands.guild_only()
 	@app_commands.guilds(discord.Object(id=539951635288293397))
-	async def exchange_rate(self, ctx: commands.Context, currency: cur_options) -> None:
+	async def exchange_rate(self, ctx: commands.Context, currency: CurrencyOptions) -> None:
 		""" 查詢半年內貨幣最高、最低、平均匯率
 		
 		Parameters
@@ -72,7 +70,7 @@ class Stock(commands.Cog):
 	@commands.hybrid_command(name="best_worst_point", description="查詢最賺及最賠的兌換點")
 	@commands.guild_only()
 	@app_commands.guilds(discord.Object(id=539951635288293397))
-	async def best_worst_point(self, ctx: commands.Context, currency: cur_options) -> None:
+	async def best_worst_point(self, ctx: commands.Context, currency: CurrencyOptions) -> None:
 		""" 查詢半年內最賺及最賠的兌換點
 		
 		Parameters
@@ -91,7 +89,7 @@ class Stock(commands.Cog):
 	@commands.hybrid_command(name="buy_sell_chart", description="買入VS賣出散佈折線圖")
 	@commands.guild_only()
 	@app_commands.guilds(discord.Object(id=539951635288293397))
-	async def buy_sell_chart(self, ctx: commands.Context, currency: cur_options) -> None:
+	async def buy_sell_chart(self, ctx: commands.Context, currency: CurrencyOptions) -> None:
 		""" 查詢半年內的買入VS賣出散佈折線圖
 		
 		Parameters
@@ -105,7 +103,7 @@ class Stock(commands.Cog):
 	@commands.hybrid_command(name="predicition_chart", description="未來走向預測圖")
 	@commands.guild_only()
 	@app_commands.guilds(discord.Object(id=539951635288293397))
-	async def predicition_chart(self, ctx: commands.Context, currency: cur_options) -> None:
+	async def predicition_chart(self, ctx: commands.Context, currency: CurrencyOptions) -> None:
 		""" 未來走向預測圖
 		
 		Parameters
@@ -119,7 +117,7 @@ class Stock(commands.Cog):
 	@commands.hybrid_command(name="change_pie_chart", description="查詢半年內的漲跌圓餅圖")
 	@commands.guild_only()
 	@app_commands.guilds(discord.Object(id=539951635288293397))
-	async def change_pie_chart(self, ctx: commands.Context, currency: cur_options) -> None:
+	async def change_pie_chart(self, ctx: commands.Context, currency: CurrencyOptions) -> None:
 		""" 查詢半年內的漲跌圓餅圖
 		
 		Parameters
@@ -133,7 +131,7 @@ class Stock(commands.Cog):
 	@commands.hybrid_command(name="compare_bar_chart", description="查詢兩貨幣的漲跌關聯長條圖")
 	@commands.guild_only()
 	@app_commands.guilds(discord.Object(id=539951635288293397))
-	async def compare_bar_chart(self, ctx: commands.Context, currency_a: cur_options, currency_b: cur_options) -> None:
+	async def compare_bar_chart(self, ctx: commands.Context, currency_a: CurrencyOptions, currency_b: CurrencyOptions) -> None:
 		""" 查詢兩貨幣的漲跌關聯長條圖
 		
 		Parameters

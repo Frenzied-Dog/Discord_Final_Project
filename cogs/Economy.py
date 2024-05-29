@@ -4,6 +4,7 @@ from discord.ext import commands
 import os
 import time
 import sqlite3
+from typing import Literal
 from random import random
 
 class Economy(commands.Cog):
@@ -45,15 +46,15 @@ class Economy(commands.Cog):
 	@commands.hybrid_command(name="bet", description="賭博")
 	@commands.guild_only()
 	@app_commands.guilds(discord.Object(id=539951635288293397))
-	async def bet(self, ctx: commands.Context, amount: int, big : bool = True) -> None:
+	async def bet(self, ctx: commands.Context, amount: int, big : Literal["Big", "Small"]) -> None:
 		"""小遊戲~
 
 		Parameters
 		-----------
 		amount: int
 			要下注的金額
-		big: bool
-			猜大小(預設猜大)
+		big: Literal["Big", "Small"]
+			猜大小
 		"""
 
 		if amount < 1:
@@ -68,7 +69,7 @@ class Economy(commands.Cog):
   
 		if user == None or user["Coins"] < amount:
 			await ctx.reply("你錢不夠QQ")
-		elif (big and rand > 0.5) or (not big and rand <= 0.5):
+		elif (big == "Big" and rand > 0.5) or (big == "Small" and rand <= 0.5):
 			con.execute("UPDATE USERS SET Coins = ? WHERE ID = ?;",(user["Coins"]+amount, ctx.author.id))
 			con.commit()
 			await ctx.reply(f"數字是%.2f 你贏得了{amount}元!" % rand)
