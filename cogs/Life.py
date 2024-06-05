@@ -3,6 +3,7 @@ from discord import app_commands
 from discord.ext import commands
 import os
 import requests,json,bs4
+import aiohttp,io
 import sqlite3
 from typing import Literal
 from random import randint
@@ -11,7 +12,9 @@ top10_url = f"https://api.giphy.com/v1/gifs/trending?api_key={os.getenv('GIPHY_K
 random_url = f"https://api.giphy.com/v1/gifs/random?api_key={os.getenv('GIPHY_KEY')}"
 giphy_search_url = f"https://api.giphy.com/v1/gifs/search?api_key={os.getenv('GIPHY_KEY')}&q=%s&limit=25&offset=0&rating=g&lang=en&bundle=messaging_non_clips"
 tenor_search_url = f"https://tenor.googleapis.com/v2/search?key={os.getenv('TENOR_KEY')}&q=%s&client_key=fddcbot&limit=5&media_filter=gif&random=true"
-StarSigns = Literal["牡羊座","金牛座","雙子座","巨蟹座","獅子座","處女座","天秤座","天蠍座","射手座","摩羯座","水瓶座","雙魚座"]
+StarSigns = Literal["牡羊","金牛","雙子","巨蟹","獅子","處女","天秤","天蠍","射手","摩羯","水瓶","雙魚"]
+sign_dict: dict[str,int] = {"牡羊": 0, "金牛": 1, "雙子": 2, "巨蟹": 3, "獅子": 4, "處女": 5, "天秤": 6, "天蠍": 7, "射手": 8, "摩羯": 9, "水瓶": 10, "雙魚": 11}
+
 
 class Life(commands.Cog):
 	def __init__(self, bot):
@@ -124,14 +127,41 @@ class Life(commands.Cog):
 		await ctx.defer()
 
 		try:
-			htmlfile = requests.get(f"https://astro.click108.com.tw/daily.php?iAstro=10")
+			htmlfile = requests.get("https://astro.click108.com.tw/daily.php?iAstro=%d" % sign_dict[sign])
 		except Exception as err:
 			print(f"網頁下載失敗: {err}")
 
 		soup = bs4.BeautifulSoup(htmlfile.text,'lxml')
-		context = soup.find("div", class_="TODAY_CONTENT")
-		# print(context.text)
-		await ctx.reply(context.text)
+
+		file: discord.File = None
+		img_url = soup.find("div", class_="STARBABY").find("img")["src"]
+		async with aiohttp.ClientSession() as session: # creates session
+			try:
+				async with session.get(img_url) as resp: # gets image from url
+					img = await resp.read() # reads image from response
+					with io.BytesIO(img) as f: # converts to file-like object
+						file = discord.File(f, "star_baby.png")
+			except Exception as err:
+				print(f"圖片取得失敗: {err}")
+    
+		ret: str = ""
+		# content = (soup.find("div", class_="TODAY_CONTENT").text.strip('\n').replace("今日", "**今日").replace("解析", "解析**\n")
+        #      												.replace("愛情運勢","\n愛情運勢").replace("事業運勢","\n事業運勢").replace("財運運勢","\n財運運勢"))
+		content = soup.find("div", class_="TODAY_CONTENT").text.strip('\n').replace("\n","\n\n").replace("今日", "**今日",1).replace("解析", "解析**",1)
+		ret += "%s\n\n" % content
+  
+		words = soup.find("div", class_="TODAY_WORD").text.strip('\n')
+		ret += "今日短評: %s\n\n" % words
+
+		tmp = soup.find_all("div", class_="LUCKY")
+		num = tmp[0].text.strip('\n')
+		color = tmp[1].text.strip('\n')
+		lucky_sign = tmp[4].text.strip('\n')
+
+		ret += "幸運數字: %s\n幸運顏色: %s\n幸運星座: %s\n\n" % (num, color, lucky_sign)
+
+		await ctx.reply(ret, file=file)
+
 
 async def setup(bot: commands.Bot):
 	await bot.add_cog(Life(bot), guilds=[discord.Object(id=539951635288293397)])

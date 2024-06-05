@@ -1,10 +1,8 @@
 import matplotlib.pyplot as plt
 import numpy as np
 import pandas as pd
-import requests
-import bs4
+import requests,bs4,matplotlib
 import io
-import matplotlib
 matplotlib.use('agg')
 
 rate_url = "https://rate.bot.com.tw/xrt/quote/l6m/%s"
