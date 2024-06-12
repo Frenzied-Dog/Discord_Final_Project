@@ -5,13 +5,6 @@ from discord import app_commands
 from discord.ext import tasks,commands
 from typing import Literal
 
-
-# import matplotlib.pyplot as plt
-# import numpy as np
-# import pandas as pd
-# import requests, bs4, time
-
-# rate_url = "https://rate.bot.com.tw/xrt/quote/l6m/%s"
 CurrencyOptions = Literal["USD","EUR","CNY","JPY","HKD","GBP","AUD","SGD"]
 
 class Stock(commands.Cog):
@@ -141,7 +134,12 @@ class Stock(commands.Cog):
 		currencyB: Literal
 			選擇的貨幣2
 		"""
-		ret = get_compare_bar_chart(self.bot.datas, currency_a, currency_b)
+		if currency_a == currency_b:
+			await ctx.reply("請選擇兩種不同的貨幣")
+			return
+  
+		await ctx.defer()
+		ret: io.BytesIO = get_compare_bar_chart(self.bot.datas, currency_a, currency_b)
   
 		await ctx.reply(file=discord.File(ret,filename=f"{currency_a}_{currency_b}_compare_bar.png"))  
   

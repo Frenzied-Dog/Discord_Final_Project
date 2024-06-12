@@ -173,7 +173,7 @@ def get_predict(main_datas: dict, power_num: list[int], cur: str) -> io.BytesIO:
     return data_stream
 
 
-def get_compare_bar_chart(main_datas: dict, curA: str, curB: str) -> None:
+def get_compare_bar_chart(main_datas: dict, curA: str, curB: str) -> io.BytesIO:
     dataA = main_datas[curA]["updown"]["raw"]
     dataB = main_datas[curB]["updown"]["raw"]
     
@@ -190,7 +190,7 @@ def get_compare_bar_chart(main_datas: dict, curA: str, curB: str) -> None:
     return data_stream
 
 
-def get_proportion_pie(main_datas: dict, cur: str) -> None:
+def get_proportion_pie(main_datas: dict, cur: str) -> io.BytesIO:
     data = main_datas[cur]["updown"]["counts"]
     data.plot.pie(y="Cash_BID", ylabel="", legend=False, autopct="%1.2f%%", title=f"{cur} Proportion")
     # plt.show()
