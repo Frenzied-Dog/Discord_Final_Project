@@ -26,11 +26,11 @@ class Life(commands.Cog):
 		print("Life Cog loaded")
 
 
-	@commands.hybrid_command(name="random_gif", description="隨機GIF")
+	@commands.hybrid_command(name="random_gif", description="隨機GIF (-5)")
 	@commands.guild_only()
 	@app_commands.guilds(discord.Object(id=539951635288293397))
 	async def random_gif(self, ctx: commands.Context) -> None:
-		"""隨機GIF (每次5積分)"""
+		"""隨機GIF (每次-5積分)"""
 		con = sqlite3.connect('cogs/data.db')
 		con.row_factory = sqlite3.Row
   
@@ -54,11 +54,11 @@ class Life(commands.Cog):
 		con.close()
 
 
-	@commands.hybrid_command(name="search_gif", description="關鍵字搜尋GIF")
+	@commands.hybrid_command(name="search_gif", description="關鍵字搜尋GIF (-10)")
 	@commands.guild_only()
 	@app_commands.guilds(discord.Object(id=539951635288293397))
 	async def search_gif(self, ctx: commands.Context, keyword: str) -> None:
-		"""關鍵字搜尋GIF (每次10積分)
+		"""關鍵字搜尋GIF (每次-10積分)
   
 		Parameters
 		-----------
@@ -101,11 +101,11 @@ class Life(commands.Cog):
 			print("Something went wrong")
 		
 
-	@commands.hybrid_command(name="star_sign_daily", description="關鍵字搜尋GIF")
+	@commands.hybrid_command(name="star_sign_daily", description="每日星座運勢 (-5)")
 	@commands.guild_only()
 	@app_commands.guilds(discord.Object(id=539951635288293397))
 	async def star_sign_daily(self, ctx: commands.Context, sign: StarSigns) -> None:
-		"""星座運勢 (每次5積分)
+		"""星座運勢 (每次-5積分)
   
 		Parameters
 		-----------

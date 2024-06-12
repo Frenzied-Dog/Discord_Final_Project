@@ -2,7 +2,7 @@ import os
 import discord
 from discord.ext import commands
 
-class Sync(commands.Cog):
+class Syncs(commands.Cog):
 	def __init__(self, bot):
 		self.bot = bot
 		self.description = "除錯用"
@@ -12,7 +12,7 @@ class Sync(commands.Cog):
 		print("Sync Cog loaded")
 
 	@commands.command()
-	@commands.is_owner()
+	@commands.has_permissions(administrator=True)
 	async def sync(self, ctx: commands.Context) -> None:
 		"""同步指令 (管理員專用)"""
 		fmt = await ctx.bot.tree.sync(guild=ctx.guild)
@@ -27,4 +27,4 @@ class Sync(commands.Cog):
    
 
 async def setup(bot: commands.Bot):
-	await bot.add_cog(Sync(bot), guilds=[discord.Object(id=539951635288293397)])
+	await bot.add_cog(Syncs(bot), guilds=[discord.Object(id=539951635288293397)])

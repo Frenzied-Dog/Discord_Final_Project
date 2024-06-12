@@ -53,7 +53,7 @@ class Stock(commands.Cog):
 		"""
 		
 		ret = ""
-		for index, row in self.datas[currency]["analysis"].iterrows():
+		for index, row in self.bot.datas[currency]["analysis"].iterrows():
 			ret += "%s%s最高匯率: %s 日期: %s\n" % (currency, en2cn_dict[index], row["Max"], row["Max_Date"])
 			ret += "%s%s最低匯率: %s 日期: %s\n" % (currency, en2cn_dict[index], row["Min"], row["Min_Date"])
 			ret += "%s%s平均匯率: %.3f\n\n" % (currency, en2cn_dict[index], row["Mean"])

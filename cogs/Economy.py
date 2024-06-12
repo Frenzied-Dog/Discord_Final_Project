@@ -16,11 +16,11 @@ class Economy(commands.Cog):
 	async def on_ready(self):
 		print("Economy Cog loaded")
   
-	@commands.hybrid_command(name="daily", description="每日簽到")
+	@commands.hybrid_command(name="daily", description="每日簽到 (+100)")
 	@commands.guild_only()
 	@app_commands.guilds(discord.Object(id=539951635288293397))
 	async def daily(self, ctx: commands.Context) -> None:
-		"""每日簽到"""
+		"""每日簽到 (+100積分)"""
   
 		await ctx.defer()
 		con = sqlite3.connect('cogs/data.db')
@@ -29,31 +29,31 @@ class Economy(commands.Cog):
 		user = con.execute("SELECT * FROM USERS WHERE ID = ?;", (ctx.author.id,)).fetchone()
 		# check if user exists
 		if user == None:
-			con.execute("INSERT INTO USERS Values (?, 10, ?);", (ctx.author.id, time.strftime("%Y-%m-%d")))
+			con.execute("INSERT INTO USERS Values (?, 100, ?);", (ctx.author.id, time.strftime("%Y-%m-%d")))
 			con.commit()
-			await ctx.reply("初次簽到成功! (+10)")
+			await ctx.reply("初次簽到成功! (+100)")
 		elif user[2] == time.strftime("%Y-%m-%d"):
 			# check if user has signed in today
 			await ctx.reply("今天已經簽到過了!")
 		else:
 			con.execute("UPDATE USERS SET Coins = ?, LastSigned = ? WHERE ID = ?;",
-               					(user["Coins"]+10, time.strftime("%Y-%m-%d"), ctx.author.id))
+               					(user["Coins"]+100, time.strftime("%Y-%m-%d"), ctx.author.id))
 			con.commit()
-			await ctx.reply(f"簽到成功 (+10), 現在為 {user['Coins']+10}")
+			await ctx.reply(f"簽到成功 (+100), 現在為 {user['Coins']+100}")
 		con.close()
 
 
 	@commands.hybrid_command(name="bet", description="賭博")
 	@commands.guild_only()
 	@app_commands.guilds(discord.Object(id=539951635288293397))
-	async def bet(self, ctx: commands.Context, amount: int, big : Literal["Big", "Small"]) -> None:
+	async def bet(self, ctx: commands.Context, amount: int, guess : Literal["Big", "Small"]) -> None:
 		"""小遊戲~
 
 		Parameters
 		-----------
 		amount: int
 			要下注的金額
-		big: Literal["Big", "Small"]
+		guess: Literal["Big", "Small"]
 			猜大小
 		"""
 
@@ -69,7 +69,7 @@ class Economy(commands.Cog):
   
 		if user == None or user["Coins"] < amount:
 			await ctx.reply("你錢不夠QQ")
-		elif (big == "Big" and rand > 0.5) or (big == "Small" and rand <= 0.5):
+		elif (guess == "Big" and rand > 0.5) or (guess == "Small" and rand <= 0.5):
 			con.execute("UPDATE USERS SET Coins = ? WHERE ID = ?;",(user["Coins"]+amount, ctx.author.id))
 			con.commit()
 			await ctx.reply(f"數字是%.2f 你贏得了{amount}元!" % rand)

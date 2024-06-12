@@ -61,12 +61,12 @@ class Courses(commands.Cog):
 		ret += f"課程大綱: {link} \n\n"
 		return ret,pic
 
-	@commands.hybrid_command(name="search", description="課程查詢")
+	@commands.hybrid_command(name="search", description="課程查詢 (-10)")
 	@commands.guild_only()
 	@app_commands.rename(name='course_name')
 	@app_commands.guilds(discord.Object(id=539951635288293397))
 	async def search(self, ctx: commands.Context, name: str, course_id: str = None) -> None:
-		"""查詢課程大綱
+		"""查詢課程大綱 (每次-10積分)
 
 		Parameters
 		-----------
@@ -87,7 +87,7 @@ class Courses(commands.Cog):
 		con = sqlite3.connect('cogs/data.db')
 		con.row_factory = sqlite3.Row
 		user = con.execute("SELECT * FROM USERS WHERE ID = ?;", (ctx.author.id,)).fetchone()
-		if user == None or user["Coins"] < 20:
+		if user == None or user["Coins"] < 10:
 			await ctx.reply("你錢不夠QQ")
 
 		# start searching
@@ -148,7 +148,7 @@ class Courses(commands.Cog):
 			if count == 0: ret = "找不到指定的課程代碼!"
 		await ctx.reply(ret,files=pics)
 		web.quit()
-		con.execute("UPDATE USERS SET Coins = ? WHERE ID = ?;",(user["Coins"]-20, ctx.author.id))
+		con.execute("UPDATE USERS SET Coins = ? WHERE ID = ?;",(user["Coins"]-10, ctx.author.id))
 		con.commit()
 		con.close()
 
